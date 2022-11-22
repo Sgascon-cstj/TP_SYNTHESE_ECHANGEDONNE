@@ -1,7 +1,7 @@
 import express from 'express';
 import paginate from 'express-paginate';
 import HttpError from 'http-errors';
-import pizzeriaRepository from '../repositories/pizzeria-repository';
+import pizzeriaRepository from '../repositories/pizzeria-repository.js';
 
 const router = express.Router();
 

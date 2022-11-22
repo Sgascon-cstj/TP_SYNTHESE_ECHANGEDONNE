@@ -1,7 +1,7 @@
 import express from 'express';
 import paginate from 'express-paginate';
 import HttpError from 'http-errors';
-import orderModel from '../models/order-model';
+import orderModel from '../models/order-model.js';
 
 const router = express.Router();
 

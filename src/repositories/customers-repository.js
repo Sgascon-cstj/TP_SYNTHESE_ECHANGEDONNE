@@ -1,5 +1,5 @@
 
-import customerModel from "../models/customer-model";
+import customerModel from "../models/customer-model.js";
 
 class customersRepository {
 

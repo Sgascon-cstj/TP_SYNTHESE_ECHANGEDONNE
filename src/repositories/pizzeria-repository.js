@@ -1,5 +1,5 @@
 
-import pizzeriaModel from "../models/pizzeria-model";
+import pizzeriaModel from "../models/pizzeria-model.js";
 
 class PizzeriaRepository {
 
