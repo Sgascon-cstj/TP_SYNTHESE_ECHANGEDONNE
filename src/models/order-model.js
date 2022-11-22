@@ -7,4 +7,4 @@ const orderShema = mongoose.Schema({
     collection: 'Orders'
 });
 
-export default mongoose.model('Orders', explorationSchema);
+export default mongoose.model('Orders', orderShema);

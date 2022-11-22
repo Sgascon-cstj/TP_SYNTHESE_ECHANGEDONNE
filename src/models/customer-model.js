@@ -7,4 +7,4 @@ const customerShema = mongoose.Schema({
     collection: 'Customers'
 });
 
-export default mongoose.model('Customers', explorationSchema);
+export default mongoose.model('Customers', customerShema);

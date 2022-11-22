@@ -7,4 +7,4 @@ const pizzeriaShema = mongoose.Schema({
     collection: 'Pizzeria'
 });
 
-export default mongoose.model('Pizzeria', explorationSchema);
+export default mongoose.model('Pizzeria', pizzeriaShema);
