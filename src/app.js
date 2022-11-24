@@ -5,7 +5,7 @@ import database from './libs/database.js';
 
 import errorMiddleware from './middlewares/errors.js';
 
-import pizzeriaRoutes from './routes/pizzeria-routes.js'
+import pizzeriasRoutes from './routes/pizzerias-routes.js'
 import ordersRoutes from './routes/order-routes.js'
 import customersRoutes from './routes/customers-routes.js'
 database();

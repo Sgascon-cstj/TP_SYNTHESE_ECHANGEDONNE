@@ -1,5 +1,5 @@
 
-import pizzeriaModel from "../models/pizzeria-model.js";
+import Pizzeria from "../models/pizzeria-model.js";
 
 class PizzeriaRepository {
 
@@ -7,6 +7,9 @@ class PizzeriaRepository {
         return pizzeriaModel.findById(idPlanet);
     }
   
+    retrieveAll() {
+        return Pizzeria.find();
+    }
 
 }
 
