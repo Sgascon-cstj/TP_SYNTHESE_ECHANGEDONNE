@@ -3,10 +3,10 @@ import Pizzeria from "../models/pizzeria-model.js";
 
 class PizzeriaRepository {
 
-    retrieveOne(idPlanet){
+    retrieveOne(idPlanet) {
         return pizzeriaModel.findById(idPlanet);
     }
-  
+
     retrieveAll() {
         return Pizzeria.find();
     }
