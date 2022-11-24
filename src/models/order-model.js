@@ -1,10 +1,28 @@
 import mongoose from 'mongoose';
 
-const orderShema = mongoose.Schema({
-
+const orderSchema = mongoose.Schema({
+    customer: {
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'Customer'
+    },
+    pizzeria: {
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'Pizzeria'
+    },
+    orderDate: {type:Date,required:true},
+    pizzas: [
+        {
+            topping: [String],
+            size: String,
+            price:Number
+        }
+    ]
    
 }, {
-    collection: 'Orders'
+    collection: 'Orders',
+    strict: 'throw'
 });
 
-export default mongoose.model('Orders', orderShema);
+export default mongoose.model('Orders', orderSchema);
