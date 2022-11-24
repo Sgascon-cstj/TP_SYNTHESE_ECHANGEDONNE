@@ -1,7 +1,7 @@
 import express from 'express';
 import paginate from 'express-paginate';
 import HttpError from 'http-errors';
-import orderModel from '../models/order-model.js';
+import orderRepository from '../repositories/orders-repository.js';
 
 const router = express.Router();
 
@@ -11,7 +11,14 @@ class OrdersRoutes {
         router.get('/', this.getAll); //limit: nbr element par page maxLimit: nbr element max pouvant etre demander au serveur a la fois
         
     }
-    getAll(){}
+    async getAll(req,res,next){
+        try {
+            let orders = await orderRepository.retrieveAll();
+            res.status(200).json(orders);
+        } catch (err) {
+            return next(err);
+        }
+    }
  
 
 }
