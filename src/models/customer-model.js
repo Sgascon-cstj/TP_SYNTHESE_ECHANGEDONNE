@@ -18,7 +18,7 @@ const customerSchema = mongoose.Schema({
     strict: 'throw'
     
 });
-customerShcema.virtual('orders',{
+customerSchema.virtual('orders',{
     ref:'Order',
     localField: '_id',
     foreignField: 'customer',

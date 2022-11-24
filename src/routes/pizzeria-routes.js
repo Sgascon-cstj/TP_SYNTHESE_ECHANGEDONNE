@@ -8,10 +8,18 @@ const router = express.Router();
 class PizzeriaRoutes {
 
     constructor() {
-        router.get('/', this.getAll); //limit: nbr element par page maxLimit: nbr element max pouvant etre demander au serveur a la fois
+        router.get('/:idPizzeria', this.getOne); //limit: nbr element par page maxLimit: nbr element max pouvant etre demander au serveur a la fois
         
     }
-    getAll(){}
+    async getOne(req,res,next){
+        try {
+            let pizzeria = await pizzeriaRepository.retrieveOne(req.params.idPizzeria);
+
+            res.status(200).json(pizzeria);
+        } catch (err) {
+            return next(err);
+        }
+    }
  
 
 }

@@ -14,9 +14,9 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/pizzeria', pizzeriaRoutes);
-app.use('/order', ordersRoutes);
-app.use('/customer', customersRoutes);
+app.use('/pizzerias', pizzeriaRoutes);
+app.use('/orders', ordersRoutes);
+app.use('/customers', customersRoutes);
 
 app.use(errorMiddleware);
 
