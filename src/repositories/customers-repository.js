@@ -4,9 +4,15 @@ import customerModel from "../models/customer-model.js";
 
 class customersRepository {
 
-    retieve(filter)
+    retieve(filter,retrieveOptions)
     {
-        return customerModel.find(filter);
+        const retrieveQuery = customerModel
+        .find(filter)
+        .sort({ birthday : 1})
+        .limit(retrieveOptions.limit)
+        .skip(retrieveOptions.skip);
+       
+    return Promise.all([retrieveQuery, customerModel.countDocuments(filter)]);
     }
 
     transform(customers){
