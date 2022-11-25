@@ -14,8 +14,52 @@ class PizzeriasRoutes {
 
     async getAll(req, res, next) {
         try {
-            let pizzerias = await pizzeriaRepository.retrieveAll();
-            res.status(200).json(pizzerias);
+            const retrieveOptions = {
+                limit: req.query.limit,
+                skip: req.skip
+            }
+
+            let [pizzerias, itemCount] = await pizzeriaRepository.retrieveAll(retrieveOptions);
+
+            const pageCount = Math.ceil(itemCount / req.query.limit);
+            const hasNextPageFunction = paginate.hasNextPages(req);
+            const hasNextPage = hasNextPageFunction(pageCount);
+
+            const pagesLinksFunction = paginate.getArrayPages(req);
+            const links = pagesLinksFunction(3, pageCount, req.query.page);
+
+            const payload = {
+                _metadata: {
+                    hasNextPage: hasNextPageFunction(pageCount),
+                    page: req.query.page,
+                    limit: req.query.limit,
+                    skip: req.skip,
+                    totalPages: pageCount,
+                    totalDocuments: itemCount
+                },
+                _links: {
+                    prev: `${process.env.BASE_URL}${links[0].url}`,
+                    self: `${process.env.BASE_URL}${links[1].url}`,
+                    next: `${process.env.BASE_URL}${links[2].url}`
+                },
+                data: pizzerias
+            }
+
+            // Cas pour la premiere page
+            if (req.query.page === 1) {
+                delete payload._links.prev;
+                payload._links.self = links[0].url;
+                payload._links.next = links[1].url;
+            }
+
+            // Cas pour la derniere page
+            if (!hasNextPage) {
+                payload._links.self = links[2].url;
+                delete payload._links.next;
+                payload._links.prev = links[1].url;
+            }
+
+            res.status(200).json(payload);
         } catch (err) {
             return next(err);
         }

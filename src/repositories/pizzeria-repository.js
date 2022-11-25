@@ -13,8 +13,13 @@ class PizzeriaRepository {
         return retrieveQuery;
     }
 
-    retrieveAll() {
-        return Pizzeria.find();
+    retrieveAll(retrieveOptions) {
+        const retrieveQuery = Pizzeria
+            .find()
+            .limit(retrieveOptions.limit)
+            .skip(retrieveOptions.skip);
+
+        return Promise.all([retrieveQuery, Pizzeria.countDocuments()]);
     }
     //Add the href and lightspeed, delete _id
     transform(pizzeria){
