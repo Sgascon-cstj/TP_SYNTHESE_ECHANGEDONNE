@@ -8,8 +8,8 @@ const router = express.Router();
 class PizzeriasRoutes {
 
     constructor() {
-        router.get('/', this.getAll);
-        router.get('/:idPizzeria', this.getOne)
+        router.get('/', paginate.middleware(25, 50), this.getAll);
+        router.get('/:idPizzeria', this.getOne);
     }
 
     async getAll(req, res, next) {
@@ -19,14 +19,35 @@ class PizzeriasRoutes {
                 skip: req.skip
             }
 
-            let [pizzerias, itemCount] = await pizzeriaRepository.retrieveAll(retrieveOptions);
+            let filter = {};
+            if (req.query.speciality) {
+                filter = { 'chef.speciality': req.query.speciality };
+            }
 
+            let [pizzerias, itemCount] = await pizzeriaRepository.retrieveAll(retrieveOptions, filter);
             const pageCount = Math.ceil(itemCount / req.query.limit);
             const hasNextPageFunction = paginate.hasNextPages(req);
             const hasNextPage = hasNextPageFunction(pageCount);
 
             const pagesLinksFunction = paginate.getArrayPages(req);
             const links = pagesLinksFunction(3, pageCount, req.query.page);
+
+            pizzerias = pizzerias.map(p => {
+                p = p.toObject({ getters: false, virtuals: false });
+                p = pizzeriaRepository.transform(p);
+                return p;
+            });
+
+            //Sort by chef names a-z
+            pizzerias = pizzerias.sort(function (a, b) {
+                if (a.chef.name < b.chef.name) {
+                    return -1;
+                }
+                if (a.chef.name > b.chef.name) {
+                    return 1;
+                }
+                return 0;
+            });
 
             const payload = {
                 _metadata: {
@@ -64,8 +85,8 @@ class PizzeriasRoutes {
             return next(err);
         }
     }
-    
-    async getOne(req,res,next){
+
+    async getOne(req, res, next) {
         try {
             const retrieveOptions = {};
 
@@ -73,15 +94,15 @@ class PizzeriasRoutes {
                 retrieveOptions.embed = 'orders';
             }
 
-            let pizzeria = await pizzeriaRepository.retrieveOne(req.params.idPizzeria,retrieveOptions);
+            let pizzeria = await pizzeriaRepository.retrieveOne(req.params.idPizzeria, retrieveOptions);
             if (!pizzeria) {
                 return next(HttpError.NotFound(`La pizzeria avec l'id ${req.params.idPizzeria} n'existe pas!`));
             }
-            pizzeria = pizzeria.toObject({getters:false,virtuals:true});
+            pizzeria = pizzeria.toObject({ getters: false, virtuals: true });
             pizzeria = pizzeriaRepository.transform(pizzeria);
             res.status(200).json(pizzeria);
 
-            
+
         } catch (err) {
             return next(err);
         }

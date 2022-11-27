@@ -3,7 +3,7 @@ import Pizzeria from "../models/pizzeria-model.js";
 
 class PizzeriaRepository {
 
-    retrieveOne(idPlanet,retrieveOptions={}) {
+    retrieveOne(idPlanet, retrieveOptions = {}) {
 
         const retrieveQuery = Pizzeria.findById(idPlanet);
         if (retrieveOptions.embed === 'orders') {
@@ -13,16 +13,17 @@ class PizzeriaRepository {
         return retrieveQuery;
     }
 
-    retrieveAll(retrieveOptions) {
-        const retrieveQuery = Pizzeria
-            .find()
+    retrieveAll(retrieveOptions = {}, filter = {}) {
+        const retrieveQuery = Pizzeria.find(filter)
             .limit(retrieveOptions.limit)
             .skip(retrieveOptions.skip);
 
+        //TODO: Gérer totalDocuments quand filter appliqué
         return Promise.all([retrieveQuery, Pizzeria.countDocuments()]);
     }
+
     //Add the href and lightspeed, delete _id
-    transform(pizzeria){
+    transform(pizzeria) {
         pizzeria.href = `${process.env.BASE_URL}/pizzerias/${pizzeria._id}`;
         pizzeria.lightSpeed = `[${pizzeria.planet}]@(${pizzeria.coord.lat};${pizzeria.coord.lon})`;
 
