@@ -38,17 +38,6 @@ class PizzeriasRoutes {
                 return p;
             });
 
-            //Sort by chef names a-z
-            pizzerias = pizzerias.sort(function (a, b) {
-                if (a.chef.name < b.chef.name) {
-                    return -1;
-                }
-                if (a.chef.name > b.chef.name) {
-                    return 1;
-                }
-                return 0;
-            });
-
             const payload = {
                 _metadata: {
                     hasNextPage: hasNextPageFunction(pageCount),

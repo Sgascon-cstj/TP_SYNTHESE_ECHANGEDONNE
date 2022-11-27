@@ -8,11 +8,10 @@ const router = express.Router();
 class CustomersRoutes {
 
     constructor() {
-        router.get('/',paginate.middleware(20, 40), this.getAll); //limit: nbr element par page maxLimit: nbr element max pouvant etre demander au serveur a la fois
-        
+        router.get('/', paginate.middleware(20, 40), this.getAll);
+        router.post('/', this.post);
     }
-    async getAll(req,res,next)
-    {
+    async getAll(req, res, next) {
         try {
             const retrieveOptions = {
                 limit: req.query.limit,
@@ -23,29 +22,29 @@ class CustomersRoutes {
                 filter.planet = req.query.planet;
             }
 
-         let [customers,itemCount] = await customersRepository.retieve(filter,retrieveOptions);
-         const pageCount = Math.ceil(itemCount / req.query.limit);
-         const hasNextPageFunction = paginate.hasNextPages(req);
-         const hasNextPage = hasNextPageFunction(pageCount);
+            let [customers, itemCount] = await customersRepository.retieve(filter, retrieveOptions);
+            const pageCount = Math.ceil(itemCount / req.query.limit);
+            const hasNextPageFunction = paginate.hasNextPages(req);
+            const hasNextPage = hasNextPageFunction(pageCount);
 
-         const pagesLinksFunction = paginate.getArrayPages(req);
-         const links = pagesLinksFunction(3, pageCount, req.query.page);
-         const payload = {
-            _metadata: {
-                hasNextPage: hasNextPageFunction(pageCount),
-                page: req.query.page,
-                limit: req.query.limit,
-                skip: req.skip,
-                totalPages: pageCount,
-                totalDocuments: itemCount
-            },
-            _links: {
-                prev: `${process.env.BASE_URL}${links[0].url}`,
-                self: `${process.env.BASE_URL}${links[1].url}`,
-                next: `${process.env.BASE_URL}${links[2].url}`
-            },
-            data: customers
-        }
+            const pagesLinksFunction = paginate.getArrayPages(req);
+            const links = pagesLinksFunction(3, pageCount, req.query.page);
+            const payload = {
+                _metadata: {
+                    hasNextPage: hasNextPageFunction(pageCount),
+                    page: req.query.page,
+                    limit: req.query.limit,
+                    skip: req.skip,
+                    totalPages: pageCount,
+                    totalDocuments: itemCount
+                },
+                _links: {
+                    prev: `${process.env.BASE_URL}${links[0].url}`,
+                    self: `${process.env.BASE_URL}${links[1].url}`,
+                    next: `${process.env.BASE_URL}${links[2].url}`
+                },
+                data: customers
+            }
 
             // Cas pour la premiere page
             if (req.query.page === 1) {
@@ -61,24 +60,40 @@ class CustomersRoutes {
                 payload._links.prev = links[1].url;
             }
 
-         if (!customers) {//If there is no filter
-            return next(HttpError.NotFound('Aucun customers'));
-         }
-        
+            if (!customers) {//If there is no filter
+                return next(HttpError.NotFound('Aucun customers'));
+            }
 
-        customers = customers.map(c => {
-            c = c.toObject({getters:false, virtuals:false});
-            c = customersRepository.transform(c);
-            return c;
-        });
-         return res.status(200).json(payload);
+
+            customers = customers.map(c => {
+                c = c.toObject({ getters: false, virtuals: false });
+                c = customersRepository.transform(c);
+                return c;
+            });
+            return res.status(200).json(payload);
 
         } catch (err) {
             return next(err);
         }
     }
- 
 
+    async post(req, res, next) {
+        const newCustomer = req.body;
+
+        if (Object.keys(newCustomer).length === 0) {
+            return next(HttpError.BadRequest('Un client ne peut pas contenir aucune informations'));
+        }
+
+        try {
+            let customerAdded = await customersRepository.create(newCustomer);
+            customerAdded = customerAdded.toObject({ getters: false, virtuals: false });
+            customerAdded = customersRepository.transform(customerAdded);
+
+            res.status(201).json(customerAdded);
+        } catch (err) {
+            return next(err);
+        }
+    }
 }
 
 new CustomersRoutes();
