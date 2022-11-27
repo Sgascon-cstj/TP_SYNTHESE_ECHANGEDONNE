@@ -15,6 +15,7 @@ class PizzeriaRepository {
 
     retrieveAll(retrieveOptions = {}, filter = {}) {
         const retrieveQuery = Pizzeria.find(filter)
+            .sort({ 'chef.name': 1 })
             .limit(retrieveOptions.limit)
             .skip(retrieveOptions.skip);
 
