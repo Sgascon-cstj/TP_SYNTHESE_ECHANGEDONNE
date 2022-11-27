@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const pizzeriaSchema = mongoose.Schema({
-    
+
     planet: { type: String, required: true },
     coord: {
         lat: { type: Number, required: true, min: -1000, max: 1000 },
@@ -16,7 +16,7 @@ const pizzeriaSchema = mongoose.Schema({
 }, {
     collection: 'Pizzerias',
     strict: 'throw',
-    id:false
+    id: false
 });
 pizzeriaSchema.virtual('orders', {
     ref: 'Order',
