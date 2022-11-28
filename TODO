@@ -1,3 +1,8 @@
 
 Todo:
   ☐ P1 - Total document countDocuments() when filter is active
+  
+  ☐ P1 - Lorsque le paramètre d’URL speciality est présent n’oublier pas d’ajuster le code pour compter le nombre de documents. Un test avec la speciality Mango pourrait être ntéressant.
+
+  ☐ C1 - Vous devez validez les données du corps de la requête avec la technique illustrée en classe avant de faire l'insertion dans la base de données.
+  

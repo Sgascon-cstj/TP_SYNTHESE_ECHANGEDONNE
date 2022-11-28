@@ -77,6 +77,7 @@ class CustomersRoutes {
         }
     }
 
+    // C1 - Tom Strohmeier
     async post(req, res, next) {
         const newCustomer = req.body;
 
@@ -84,12 +85,23 @@ class CustomersRoutes {
             return next(HttpError.BadRequest('Un client ne peut pas contenir aucune informations'));
         }
 
+        let returnContent = true;
+        if (req.query._body && req.query._body === 'false') {
+            returnContent = false;
+        }
+
         try {
             let customerAdded = await customersRepository.create(newCustomer);
             customerAdded = customerAdded.toObject({ getters: false, virtuals: false });
             customerAdded = customersRepository.transform(customerAdded);
 
-            res.status(201).json(customerAdded);
+            res.append('location', `${customerAdded.href}`);
+
+            if (returnContent === false) {
+                res.status(204).end();
+            } else {
+                res.status(201).json(customerAdded);
+            }
         } catch (err) {
             return next(err);
         }

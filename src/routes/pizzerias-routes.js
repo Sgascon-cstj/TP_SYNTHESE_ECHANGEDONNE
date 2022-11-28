@@ -12,6 +12,7 @@ class PizzeriasRoutes {
         router.get('/:idPizzeria', this.getOne);
     }
 
+    //P1 - Tom Strohmeier
     async getAll(req, res, next) {
         try {
             const retrieveOptions = {
