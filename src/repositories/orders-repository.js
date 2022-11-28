@@ -7,7 +7,7 @@ class OrdersRepository {
     return orderModel.find();
   }
 
-  retrieveById(idPizzeria, idOrder, retrieveOptions) {
+  retrieveByIds(idPizzeria, idOrder, retrieveOptions) {
     const retrieveOrder = orderModel.find({ pizzeria: idPizzeria, _id: idOrder });
 
     if (retrieveOptions.customer) {
@@ -17,16 +17,32 @@ class OrdersRepository {
     return retrieveOrder;
   }
 
-  transform(order) {
+  transform(order, retrieveOptions) {
+    const taxes = 0.0087;
     order.href = `${process.env.BASE_URL}/orders/${order._id}`;
-    order.customer = `${process.env.BASE_URL}/customers/${order.customer}`;
-    order.pizzeria = `${process.env.BASE_URL}/pizzerias/${order.pizzeria}`;
+
+    if (!retrieveOptions.customer) {
+      order.customer = { href: `${process.env.BASE_URL}/customers/${order.customer}` };
+    } else {
+      delete order.customer.id;
+    }
+
+    order.pizzeria = { href: `${process.env.BASE_URL}/pizzerias/${order.pizzeria}` };
+    let sousTotal = 0;
 
     order.pizzas.forEach(p => {
+      sousTotal += p.price;
       delete p.topping;
       delete p._id;
       delete p.id;
     });
+
+    let totalTaxes = (sousTotal * taxes);
+    let sommeTotal = (sousTotal + totalTaxes);
+    order.subTotal = sousTotal;
+    order.taxeRates = taxes;
+    order.taxes = parseFloat(totalTaxes.toFixed(3));
+    order.total = parseFloat(sommeTotal.toFixed(3));
 
     delete order._id;
     delete order.id;

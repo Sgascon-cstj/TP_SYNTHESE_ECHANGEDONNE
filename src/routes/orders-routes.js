@@ -33,19 +33,17 @@ class OrdersRoutes {
                 retrieveOptions.customer = true;
             }
 
-            let order = await orderRepository.retrieveById(idPizzeria, idOrder, retrieveOptions);
+            let order = await orderRepository.retrieveByIds(idPizzeria, idOrder, retrieveOptions);
 
-            if (order) {
+            if (order[0]) {
                 order = order[0].toObject({ getters: false, virtuals: true });
-                order = orderRepository.transform(order);
-
                 if (retrieveOptions.customer) {
                     order.customer = customerRepository.transform(order.customer);
-                    delete order.customer.id;
                 }
+                order = orderRepository.transform(order, retrieveOptions);
                 res.status(200).json(order);
             } else {
-                return next(HttpError.NotFound(`La commande ${idOrder} n'existe pas`));
+                return next(HttpError.NotFound(`La combinaison idOrder: ${idOrder} et idPizzeria ${idPizzeria}n'existe pas`));
             }
 
         } catch (err) {
