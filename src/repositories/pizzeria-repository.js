@@ -18,7 +18,6 @@ class PizzeriaRepository {
             .sort({ 'chef.name': 1 })
             .limit(retrieveOptions.limit)
             .skip(retrieveOptions.skip);
-        //TODO: Gérer totalDocuments quand filter appliqué
         return Promise.all([retrieveQuery, Pizzeria.countDocuments(filter)]);
     }
 

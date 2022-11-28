@@ -1,2 +1,3 @@
 # TP_SYNTHESE_ECHANGEDONNE
 Samuel Gascon 2151866 A
+Tom Strohmeier B
