@@ -13,14 +13,13 @@ class PizzeriaRepository {
         return retrieveQuery;
     }
 
-    retrieveAll(retrieveOptions = {}, filter = {}) {
+    retrieveAll(retrieveOptions, filter) {
         const retrieveQuery = Pizzeria.find(filter)
             .sort({ 'chef.name': 1 })
             .limit(retrieveOptions.limit)
             .skip(retrieveOptions.skip);
-
         //TODO: Gérer totalDocuments quand filter appliqué
-        return Promise.all([retrieveQuery, Pizzeria.countDocuments()]);
+        return Promise.all([retrieveQuery, Pizzeria.countDocuments(filter)]);
     }
 
     //Add the href and lightspeed, delete _id

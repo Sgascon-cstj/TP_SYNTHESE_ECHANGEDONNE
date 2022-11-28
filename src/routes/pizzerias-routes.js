@@ -29,7 +29,6 @@ class PizzeriasRoutes {
             const pageCount = Math.ceil(itemCount / req.query.limit);
             const hasNextPageFunction = paginate.hasNextPages(req);
             const hasNextPage = hasNextPageFunction(pageCount);
-
             const pagesLinksFunction = paginate.getArrayPages(req);
             const links = pagesLinksFunction(3, pageCount, req.query.page);
 
@@ -39,7 +38,7 @@ class PizzeriasRoutes {
                 return p;
             });
 
-            const payload = {
+            let payload = {
                 _metadata: {
                     hasNextPage: hasNextPageFunction(pageCount),
                     page: req.query.page,
@@ -48,13 +47,23 @@ class PizzeriasRoutes {
                     totalPages: pageCount,
                     totalDocuments: itemCount
                 },
-                _links: {
+                data: pizzerias
+            }
+
+            if (pageCount >= 3) {
+                payload._links = {
                     prev: `${process.env.BASE_URL}${links[0].url}`,
                     self: `${process.env.BASE_URL}${links[1].url}`,
                     next: `${process.env.BASE_URL}${links[2].url}`
-                },
-                data: pizzerias
+                }
+            } else {
+                payload._links = {
+                    prev: {},
+                    self: `${process.env.BASE_URL}${links[0].url}`,
+                    next: `${process.env.BASE_URL}${links[1].url}`
+                }
             }
+
 
             // Cas pour la premiere page
             if (req.query.page === 1) {
