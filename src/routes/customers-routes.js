@@ -12,7 +12,30 @@ class CustomersRoutes {
     constructor() {
         router.get('/', paginate.middleware(20, 40), this.getAll);
         router.post('/', customerValidator.complete(), validator, this.post);
+        router.put('/:idCustomer', this.put);
     }
+    //C2 Samuel Gascon
+    async put(req, res, next) {
+        try {
+            const newCustomer = req.body;
+            
+            let customer = await customersRepository.update(req.params.idCustomer,newCustomer);
+            
+            if (!customer) {
+                return next(HttpError.NotFound(`Le customer avec l'identifiant ${req.params.idCustomer} n'existe pas`));
+            }
+            customer = customer.toObject({getters:false, virtual:false});
+            customer = customersRepository.transform(customer);
+            if (req.query._body === 'false') {
+             return res.status(204).end();
+            }
+
+            res.status(200).json(customer);
+        } catch (err) {
+            return next(err)
+        }
+    }
+    //C3 Samuel Gascon
     async getAll(req, res, next) {
         try {
             const retrieveOptions = {
@@ -25,6 +48,14 @@ class CustomersRoutes {
             }
 
             let [customers, itemCount] = await customersRepository.retieve(filter, retrieveOptions);
+            if (!customers[0]) {
+                return next(HttpError.NotFound('Aucun customers'));
+            }
+            customers = customers.map(c => {
+                c = c.toObject({ getters: false, virtuals: false });
+                c = customersRepository.transform(c);
+                return c;
+            });
             const pageCount = Math.ceil(itemCount / req.query.limit);
             const hasNextPageFunction = paginate.hasNextPages(req);
             const hasNextPage = hasNextPageFunction(pageCount);
@@ -62,16 +93,10 @@ class CustomersRoutes {
                 payload._links.prev = links[1].url;
             }
 
-            if (!customers) {//If there is no filter
-                return next(HttpError.NotFound('Aucun customers'));
-            }
+           
 
 
-            customers = customers.map(c => {
-                c = c.toObject({ getters: false, virtuals: false });
-                c = customersRepository.transform(c);
-                return c;
-            });
+       
             return res.status(200).json(payload);
 
         } catch (err) {

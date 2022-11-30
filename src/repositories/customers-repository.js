@@ -1,6 +1,7 @@
 
 import dayjs from "dayjs";
 import customerModel from "../models/customer-model.js";
+import objectToDotNotation from '../libs/objectToDotNotation.js';
 
 class customersRepository {
 
@@ -13,7 +14,12 @@ class customersRepository {
 
         return Promise.all([retrieveQuery, customerModel.countDocuments(filter)]);
     }
+    update(idCustomer, customerModif) {
 
+        const customerToDotNotation = objectToDotNotation(customerModif);
+        return customerModel.findByIdAndUpdate(idCustomer, customerToDotNotation, {new:true});
+
+    }
     transform(customers) {
         customers.href = `${process.env.BASE_URL}/customers/${customers._id}`;
         customers.lightSpeed = `[${customers.planet}]@(${customers.coord.lat};${customers.coord.lon})`;

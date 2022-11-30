@@ -3,9 +3,10 @@ import Pizzeria from "../models/pizzeria-model.js";
 
 class PizzeriaRepository {
 
-    retrieveOne(idPlanet, retrieveOptions = {}) {
+    retrieveOne(idPizzeria, retrieveOptions = {}) {
 
-        const retrieveQuery = Pizzeria.findById(idPlanet);
+        const retrieveQuery = Pizzeria.findOne({ _id: idPizzeria});
+
         if (retrieveOptions.embed === 'orders') {
             retrieveQuery.populate('orders');
         }
