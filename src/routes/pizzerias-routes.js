@@ -84,19 +84,21 @@ class PizzeriasRoutes {
             return next(err);
         }
     }
-
+    //P2 Samuel Gascon 
     async getOne(req, res, next) {
         try {
             const retrieveOptions = {};
 
-            if (req.query.embed && req.query.embed === 'orders') {
+            if (req.query.embed === 'orders') {
                 retrieveOptions.embed = 'orders';
             }
 
             let pizzeria = await pizzeriaRepository.retrieveOne(req.params.idPizzeria, retrieveOptions);
+           
             if (!pizzeria) {
                 return next(HttpError.NotFound(`La pizzeria avec l'id ${req.params.idPizzeria} n'existe pas!`));
             }
+
             pizzeria = pizzeria.toObject({ getters: false, virtuals: true });
             pizzeria = pizzeriaRepository.transform(pizzeria);
             res.status(200).json(pizzeria);
