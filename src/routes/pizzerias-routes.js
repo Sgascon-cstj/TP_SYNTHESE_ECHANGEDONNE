@@ -31,12 +31,7 @@ class PizzeriasRoutes {
             const hasNextPage = hasNextPageFunction(pageCount);
             const pagesLinksFunction = paginate.getArrayPages(req);
 
-            let nbr = 0;
-            if (pageCount === 1) {
-                nbr = 1;
-            }
-            const links = pagesLinksFunction(nbr, pageCount, req.query.page);
-            console.log(links, pageCount);
+            const links = pagesLinksFunction(3, pageCount, req.query.page);
 
             pizzerias = pizzerias.map(p => {
                 p = p.toObject({ getters: false, virtuals: false });
@@ -63,6 +58,12 @@ class PizzeriasRoutes {
                     self: `${process.env.BASE_URL}${links[0].url}`,
                     next: {}
                 }
+            } else if (pageCount === 2) {
+                payload._links = {
+                    prev: `${process.env.BASE_URL}${links[0].url}`,
+                    self: `${process.env.BASE_URL}${links[1].url}`,
+                    next: {}
+                }
             } else {
                 payload._links = {
                     prev: `${process.env.BASE_URL}${links[0].url}`,
@@ -85,11 +86,11 @@ class PizzeriasRoutes {
                 payload._links.prev = links[1].url;
             }
 
+            // Cas pour une seule page
             if (pageCount === 1) {
                 delete payload._links.prev
                 delete payload._links.next
             }
-
 
             res.status(200).json(payload);
         } catch (err) {
