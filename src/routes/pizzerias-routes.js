@@ -30,7 +30,13 @@ class PizzeriasRoutes {
             const hasNextPageFunction = paginate.hasNextPages(req);
             const hasNextPage = hasNextPageFunction(pageCount);
             const pagesLinksFunction = paginate.getArrayPages(req);
-            const links = pagesLinksFunction(3, pageCount, req.query.page);
+
+            let nbr = 0;
+            if (pageCount === 1) {
+                nbr = 1;
+            }
+            const links = pagesLinksFunction(nbr, pageCount, req.query.page);
+            console.log(links, pageCount);
 
             pizzerias = pizzerias.map(p => {
                 p = p.toObject({ getters: false, virtuals: false });
@@ -50,34 +56,40 @@ class PizzeriasRoutes {
                 data: pizzerias
             }
 
-            if (pageCount >= 3) {
+
+            if (pageCount === 1) {
+                payload._links = {
+                    prev: {},
+                    self: `${process.env.BASE_URL}${links[0].url}`,
+                    next: {}
+                }
+            } else {
                 payload._links = {
                     prev: `${process.env.BASE_URL}${links[0].url}`,
                     self: `${process.env.BASE_URL}${links[1].url}`,
                     next: `${process.env.BASE_URL}${links[2].url}`
                 }
-            } else {
-                payload._links = {
-                    prev: {},
-                    self: `${process.env.BASE_URL}${links[0].url}`,
-                    next: `${process.env.BASE_URL}${links[1].url}`
-                }
             }
 
-
             // Cas pour la premiere page
-            if (req.query.page === 1) {
+            if (req.query.page === 1 && pageCount !== 1) {
                 delete payload._links.prev;
                 payload._links.self = links[0].url;
                 payload._links.next = links[1].url;
             }
 
             // Cas pour la derniere page
-            if (!hasNextPage) {
+            if (!hasNextPage && pageCount !== 1) {
                 payload._links.self = links[2].url;
                 delete payload._links.next;
                 payload._links.prev = links[1].url;
             }
+
+            if (pageCount === 1) {
+                delete payload._links.prev
+                delete payload._links.next
+            }
+
 
             res.status(200).json(payload);
         } catch (err) {
@@ -94,7 +106,7 @@ class PizzeriasRoutes {
             }
 
             let pizzeria = await pizzeriaRepository.retrieveOne(req.params.idPizzeria, retrieveOptions);
-           
+
             if (!pizzeria) {
                 return next(HttpError.NotFound(`La pizzeria avec l'id ${req.params.idPizzeria} n'existe pas!`));
             }
