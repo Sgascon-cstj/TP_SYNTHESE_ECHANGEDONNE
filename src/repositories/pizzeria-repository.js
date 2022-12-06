@@ -1,6 +1,6 @@
 
 import Pizzeria from "../models/pizzeria-model.js";
-
+import ordersRepository from "./orders-repository.js";
 class PizzeriaRepository {
 
     retrieveOne(idPizzeria, retrieveOptions = {}) {
@@ -26,6 +26,15 @@ class PizzeriaRepository {
     transform(pizzeria) {
         pizzeria.href = `${process.env.BASE_URL}/pizzerias/${pizzeria._id}`;
         pizzeria.lightSpeed = `[${pizzeria.planet}]@(${pizzeria.coord.lat};${pizzeria.coord.lon})`;
+
+        if (pizzeria.orders) 
+        {
+            pizzeria.orders = pizzeria.orders.map(o => {
+               
+                o = ordersRepository.transform(o,{});
+                return o;
+            });
+        }
 
         delete pizzeria._id;
         return pizzeria;
