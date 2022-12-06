@@ -51,7 +51,6 @@ class PizzeriasRoutes {
                 data: pizzerias
             }
 
-
             if (pageCount === 1) {
                 payload._links = {
                     prev: {},
