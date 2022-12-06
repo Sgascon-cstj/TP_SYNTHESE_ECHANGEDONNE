@@ -1,4 +1,5 @@
 import expressValidator from 'express-validator';
+import { PLANET_NAMES } from '../dataForValidation/constants.js';
 const { body } = expressValidator;
 
 class CustomerValidator {
@@ -17,8 +18,10 @@ class CustomerValidator {
                 .isAscii().withMessage('Caracters mu best in ASCII table').bail(),
 
             body('planet').exists().withMessage('Requis').bail()
+                .ltrim().withMessage('Vide est un nom invalide').bail()
                 .notEmpty().withMessage('Champ vide').bail()
                 .isAscii().withMessage('Caracters must be in ASCII table').bail(),
+            // .isIn('planet', PLANET_NAMES).withMessage("Planet n'existe pas").bail(),
 
             body('coord.lat').exists().withMessage('Requis').bail()
                 .notEmpty().withMessage('Champ vide').bail()
