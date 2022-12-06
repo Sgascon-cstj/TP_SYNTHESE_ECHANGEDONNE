@@ -18,16 +18,16 @@ class CustomersRoutes {
     async put(req, res, next) {
         try {
             const newCustomer = req.body;
-            
-            let customer = await customersRepository.update(req.params.idCustomer,newCustomer);
-            
+
+            let customer = await customersRepository.update(req.params.idCustomer, newCustomer);
+
             if (!customer) {
                 return next(HttpError.NotFound(`Le customer avec l'identifiant ${req.params.idCustomer} n'existe pas`));
             }
-            customer = customer.toObject({getters:false, virtual:false});
+            customer = customer.toObject({ getters: false, virtual: false });
             customer = customersRepository.transform(customer);
             if (req.query._body === 'false') {
-             return res.status(204).end();
+                return res.status(204).end();
             }
 
             res.status(200).json(customer);
@@ -93,10 +93,10 @@ class CustomersRoutes {
                 payload._links.prev = links[1].url;
             }
 
-           
 
 
-       
+
+
             return res.status(200).json(payload);
 
         } catch (err) {
