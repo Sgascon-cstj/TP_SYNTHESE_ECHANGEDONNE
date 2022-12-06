@@ -1,22 +1,28 @@
 import expressValidator from 'express-validator';
-import { PLANET_NAMES } from '../dataForValidation/constants.js';
+import { MONSTER_ANCESTORS, PLANET_NAMES } from '../dataForValidation/constants.js';
 const { body } = expressValidator;
 
-class CustomerValidator {
+class PizzeriaValidator {
 
     complete() {
         return [
 
-            body('name').exists().withMessage('Requis').bail()
+            body('chef.name').exists().withMessage('Requis').bail()
                 .ltrim().withMessage('Vide est un nom invalide').bail()
                 .notEmpty().withMessage('Le champ ne peut être vide').bail()
                 .isAscii().withMessage('Caracters mu best in ASCII table').bail(),
 
-            body('email').exists().withMessage('Requis').bail()
+            body('chef.ancestor').exists().withMessage('Requis').bail()
                 .ltrim().withMessage('Vide est un nom invalide').bail()
                 .notEmpty().withMessage('Le champ ne peut être vide').bail()
-                .isAscii().withMessage('Caracters mu best in ASCII table').bail(),
+                .isAscii().withMessage('Caracters mu best in ASCII table').bail()
+                .isIn(MONSTER_ANCESTORS).withMessage('Doit être un monstre ancètre').bail(),
 
+            body('chef.speciality').exists().withMessage('Requis').bail()
+                .ltrim().withMessage('Vide est un nom invalide').bail()
+                .notEmpty().withMessage('Le champ ne peut être vide').bail()
+                .isAscii().withMessage('Caracters mu best in ASCII table').bail()
+                .isIn(PIZZA_TOPPINGS).withMessage("topping n'existe pas").bail(),
             body('planet').exists().withMessage('Requis').bail()
                 .ltrim().withMessage('Vide est un nom invalide').bail()
                 .notEmpty().withMessage('Champ vide').bail()
@@ -30,17 +36,8 @@ class CustomerValidator {
             body('coord.lon').exists().withMessage('Requis').bail()
                 .notEmpty().withMessage('Champ vide').bail()
                 .isFloat({ min: -1000, max: 1000 }).withMessage('Value must be between -1000 and 1000').bail(),
-
-            body('phone').exists().withMessage('Requis').bail()
-                .notEmpty().withMessage('Champ vide').bail()
-                .isHexadecimal().withMessage('Must be hexadecimal value').bail()
-                .isLength({ min: 16, max: 16 }).withMessage('Must be 16 characters long').bail(),
-
-            body('birthday').exists().withMessage('Requis')
-                .notEmpty().withMessage('Champ vide').bail()
-                .isISO8601().toDate().withMessage('Must me date formet YYYY-MM--DD').bail()
         ]
     }
 }
 
-export default new CustomerValidator();
+export default new PizzeriaValidator();
