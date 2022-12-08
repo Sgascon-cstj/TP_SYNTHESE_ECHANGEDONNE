@@ -21,7 +21,7 @@ class CustomerValidator {
                 .ltrim().withMessage('Vide est un nom invalide').bail()
                 .notEmpty().withMessage('Champ vide').bail()
                 .isAscii().withMessage('Caracters must be in ASCII table').bail()
-             .isIn(PLANET_NAMES).withMessage("Planet n'existe pas").bail(),
+                .isIn(PLANET_NAMES).withMessage("Planet n'existe pas").bail(),
 
             body('coord.lat').exists().withMessage('Requis').bail()
                 .notEmpty().withMessage('Champ vide').bail()

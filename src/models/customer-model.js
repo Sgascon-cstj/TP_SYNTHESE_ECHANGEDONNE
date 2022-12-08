@@ -5,7 +5,7 @@ const customerSchema = mongoose.Schema({
 
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    planet: { type: String, required: true },
+    planet: { type: String, required: true, enum: PLANET_NAMES },
     coord: {
         lat: { type: Number, required: true, min: -1000, max: 1000 },
         lon: { type: Number, required: true, min: -1000, max: 1000 }

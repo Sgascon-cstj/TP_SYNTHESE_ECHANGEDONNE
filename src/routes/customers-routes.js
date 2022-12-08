@@ -12,7 +12,7 @@ class CustomersRoutes {
     constructor() {
         router.get('/', paginate.middleware(20, 40), this.getAll);
         router.post('/', customerValidator.complete(), validator, this.post);
-        router.put('/:idCustomer',customerValidator.complete(), validator, this.put);
+        router.put('/:idCustomer', customerValidator.complete(), validator, this.put);
     }
     //C2 Samuel Gascon
     async put(req, res, next) {

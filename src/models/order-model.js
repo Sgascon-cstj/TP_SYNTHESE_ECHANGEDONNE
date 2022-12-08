@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { PIZZA_SIZES } from '../dataForValidation/constants.js';
+import { PIZZA_TOPPINGS } from '../dataForValidation/constants.js';
 
 const orderSchema = mongoose.Schema({
     customer: {
@@ -15,8 +17,8 @@ const orderSchema = mongoose.Schema({
     pizzas: [
         {
             topping: [String],
-            size: String,
-            price: Number
+            size: { type: String, required: true, enum: PIZZA_SIZES },
+            price: { type: Number, required: true, enum: PIZZA_TOPPINGS }
         }
     ]
 }, {

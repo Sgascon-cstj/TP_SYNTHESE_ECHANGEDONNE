@@ -48,6 +48,7 @@ class PizzeriasRoutes {
                     totalPages: pageCount,
                     totalDocuments: itemCount
                 },
+                _links: {},
                 data: pizzerias
             }
 
