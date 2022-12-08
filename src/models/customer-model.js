@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { PLANET_NAMES } from '../dataForValidation/constants.js';
 
 const customerSchema = mongoose.Schema({
 
